@@ -16,7 +16,7 @@ function App() {
     const formData = new FormData();
     formData.append("file", selectedFile);
 
-    const res = await fetch("http://localhost:8000/analyze", {
+    const res = await fetch("https://ai-wushu-coach-add5.onrender.com/analyze", {
       method: "POST",
       body: formData,
     });
