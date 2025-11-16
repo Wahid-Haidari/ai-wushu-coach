@@ -155,7 +155,7 @@ def analyze_mabu(results):
 
     # Depth
     depth_msg = evaluate_depth(left_hip, left_knee, left_ankle, right_hip, right_knee, right_ankle)
-    feedback_report["stance_depth"] = depth_msg
+    feedback_report["stance_depthhh"] = depth_msg
 
     # Symmetry
     _, sym_msg = evaluate_symmetry(left_knee, right_knee)
