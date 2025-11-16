@@ -24,8 +24,8 @@ function App() {
 
     try{
 
-      // const res = await fetch("https://ai-wushu-coach-add5.onrender.com/analyze", {
-      const res = await fetch("http://127.0.0.1:8000/analyze", {
+       const res = await fetch("https://ai-wushu-coach-add5.onrender.com/analyze", {
+      // const res = await fetch("http://127.0.0.1:8000/analyze", {
         method: "POST",
         body: formData,
       });
