@@ -1,8 +1,11 @@
-from fastapi import FastAPI, UploadFile, File
+import base64 
 import cv2
 import numpy as np
-from mabu import analyze_mabu
 import mediapipe as mp
+
+
+from fastapi import FastAPI, UploadFile, File
+from mabu import analyze_mabu
 from fastapi.middleware.cors import CORSMiddleware
 
 
@@ -43,6 +46,23 @@ async def analyze_pose(file: UploadFile = File(...)):
 
     # Analyze using your mabu.py logic
     feedback = analyze_mabu(results)
+
+
+    # Draw landmarks on the image before encoding
+    if results.pose_landmarks:
+        mp.solutions.drawing_utils.draw_landmarks(
+            img,
+            results.pose_landmarks,
+            mp.solutions.pose.POSE_CONNECTIONS
+        )
+
+    # Encode processed image as JPEG
+    _, buffer = cv2.imencode(".jpg", img)
+    img_base64 = base64.b64encode(buffer).decode("utf-8")
+
+    # Add image to feedback
+    feedback["image"] = img_base64
+
     return feedback
 
 

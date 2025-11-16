@@ -4,6 +4,8 @@ function App() {
 
   const [selectedFile, setSelectedFile] = useState(null);
   const [feedback, setFeedback] = useState(null);
+  const [processedImage, setProcessedImage] = useState(null);
+
 
   const handleFileChange = (e) => {
     setSelectedFile(e.target.files[0]); //e tells you which input changed e.target is the input element itself
@@ -22,41 +24,64 @@ function App() {
 
     const data = await res.json();
     setFeedback(data);
+    setProcessedImage(`data:image/jpeg;base64,${data.image}`); 
 
   };
 
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center p-10">
-      <h1 className="text-4xl font-bold mb-8">AI Wushu Coach</h1>
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+      <div className="flex flex-col items-center w-full max-w-lg">
+        <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">
+          AI Wushu Coach
+        </h1>
 
-      <div className="bg-white p-6 rounded-xl shadow-md w-full max-w-md">
-        <input
-          type="file"
-          accept="image/*"
-          onChange={handleFileChange}
-          className="w-full border border-gray-300 rounded-lg p-3 mb-4"
-        />
+        <div className="bg-white w-full rounded-2xl shadow-xl p-8 border border-gray-200">
 
-        <button
-          onClick={handleUpload}
-          className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
-        >
-          Analyze Stance
-        </button>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
+            className="block w-full text-sm text-gray-700 
+                      border border-gray-300 rounded-lg cursor-pointer 
+                      bg-gray-50 p-2 focus:outline-none focus:ring-2 
+                      focus:ring-blue-500"
+          />
 
-        {feedback && (
-          <div className="mt-6 bg-gray-50 p-4 rounded-lg border">
-            <h3 className="text-xl font-semibold mb-3">Wushu Stance Feedback</h3>
+          <button
+            onClick={handleUpload}
+            className="mt-4 w-full bg-blue-600 text-white py-3 rounded-lg 
+                      font-semibold hover:bg-blue-700 active:bg-blue-800 
+                      transition shadow-sm"
+          >
+            Analyze Stance
+          </button>
 
-            {Object.entries(feedback).map(([key, value]) => (
-              <p key={key} className="mb-1">
-                <span className="font-medium">{key.replace(/_/g, " ")}:</span>{" "}
-                {value}
-              </p>
-            ))}
-          </div>
-        )}
+          {processedImage && (
+            <div className="mt-6 flex justify-center">
+              <img
+                src={processedImage}
+                alt="Processed pose"
+                className="rounded-lg shadow-md max-w-full"
+              />
+            </div>
+          )}
+
+
+          {feedback && (
+            <div className="mt-6 bg-gray-50 p-4 rounded-lg border">
+              <h3 className="text-xl font-semibold mb-3">Wushu Stance Feedback</h3>
+
+              {Object.entries(feedback).map(([key, value]) => (
+                <p key={key} className="mb-1">
+                  <span className="font-medium">{key.replace(/_/g, " ")}:</span>{" "}
+                  {value}
+                </p>
+              ))}
+            </div>
+          )}
+
+        </div>
       </div>
     </div>
   );
