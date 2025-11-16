@@ -72,8 +72,9 @@ def evaluate_depth(left_hip, left_knee, left_ankle, right_hip, right_knee, right
     elif left_depth_condition == "hight" or right_depth_condition == "high":
         return "⚠️ Stance is too high — lower your hips."
     elif left_depth_condition == "low" or right_depth_condition == "low":
-        return "⚠️ You may be squatting too deep or leaning forward."
-
+        return "⚠️ You may be squatting too deep."
+    else:
+        return f"{left_depth_condition}, {right_depth_condition}"
 
 
 # Evaluate symmetry between left and right knees ________________________________________
