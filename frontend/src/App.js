@@ -1,4 +1,3 @@
-import './App.css';
 import React, { useState } from "react";
 
 function App() {
@@ -28,20 +27,37 @@ function App() {
 
 
   return (
-    <div style={{ padding: 40 }}>
-      <h1>AI Wushu Coach</h1>
+    <div className="min-h-screen bg-gray-100 flex flex-col items-center p-10">
+      <h1 className="text-4xl font-bold mb-8">AI Wushu Coach</h1>
 
-      <input type="file" accept="image/*" onChange={handleFileChange} />
+      <div className="bg-white p-6 rounded-xl shadow-md w-full max-w-md">
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleFileChange}
+          className="w-full border border-gray-300 rounded-lg p-3 mb-4"
+        />
 
-      <button onClick={handleUpload} style={{ marginLeft: 10 }}>
-        Analyze Stance
-      </button>
+        <button
+          onClick={handleUpload}
+          className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
+        >
+          Analyze Stance
+        </button>
 
-      {feedback && (
-        <pre style={{ marginTop: 20, background: "#eee", padding: 20 }}>
-          {JSON.stringify(feedback, null, 2)}
-        </pre>
-      )}
+        {feedback && (
+          <div className="mt-6 bg-gray-50 p-4 rounded-lg border">
+            <h3 className="text-xl font-semibold mb-3">Wushu Stance Feedback</h3>
+
+            {Object.entries(feedback).map(([key, value]) => (
+              <p key={key} className="mb-1">
+                <span className="font-medium">{key.replace(/_/g, " ")}:</span>{" "}
+                {value}
+              </p>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
