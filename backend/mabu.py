@@ -45,26 +45,35 @@ def evaluate_knee_angle(left_hip, left_knee, left_ankle):
 
 
 # Evaluate how deep one side of a stance is ___________________________________________________________
-def evaluate_side_depth(hip, knee):
-    #  if left_knee_y == 0:
-    #     return None, "⚠️ Could not calculate depth ratio."
-     
-    
-    hip_height = hip.y
-    knee_height = knee.y
-    depth_ratio = hip_height / knee_height
-    is_correct_depth = False
-    print(f"Hip-to-knee depth ratio: {depth_ratio:.2f}")
+def evaluate_side_depth(hip, knee, ankle):
 
-    if depth_ratio > 0.95:
-        feedback = "⚠️ Stance is too high — lower your hips."  
-        
-    elif depth_ratio < 0.75:
-        feedback = "⚠️ You may be squatting too deep or leaning forward."
+    hip_to_ankle   =  ankle.y - hip.y
+    knee_to_ankle  = ankle.y - knee.y
+    depth_ratio = hip_to_ankle / knee_to_ankle
+
+    depth_condition = "good"
+    
+
+    if depth_ratio > 1.35: 
+        depth_condition = "high"    
+    elif depth_ratio < 1.00:
+        depth_condition = "low"
     else:
-        feedback = "✅ Good stance depth!"
-        is_correct_depth = True
-    return is_correct_depth, feedback
+        depth_condition = "good"
+    return depth_condition
+
+# Evaluate depth for both sides ________________________________________
+def evaluate_depth(left_hip, left_knee, left_ankle, right_hip, right_knee, right_ankle):
+    left_depth_condition = evaluate_side_depth(left_hip, left_knee, left_ankle)
+    right_depth_condition = evaluate_side_depth(right_hip, right_knee, right_ankle)
+
+    if left_depth_condition == "good" and right_depth_condition == "good":
+        return "✅ Good stance depth!"
+    elif left_depth_condition == "hight" or right_depth_condition == "high":
+        return "⚠️ Stance is too high — lower your hips."
+    elif left_depth_condition == "low" or right_depth_condition == "low":
+        return "⚠️ You may be squatting too deep or leaning forward."
+
 
 
 # Evaluate symmetry between left and right knees ________________________________________
@@ -89,7 +98,7 @@ def evaluate_stance_width(left_knee, right_knee, left_shoulder, right_shoulder):
 
     if ratio < 1.4:
         return False, "⚠️ Stance too narrow."
-    elif ratio > 2.6:
+    elif ratio > 2.85:
         return False, "⚠️ Stance too wide."
     else:
         return True, "✅ Good stance width."
@@ -138,16 +147,14 @@ def analyze_mabu(results):
     right_shoulder = lm[mp_pose.PoseLandmark.RIGHT_SHOULDER]
 
     # Knee angles
-    _, fb_left = evaluate_knee_angle(left_hip, left_knee, left_ankle)
-    _, fb_right = evaluate_knee_angle(right_hip, right_knee, right_ankle)
-    feedback_report["left_knee_angle"] = fb_left
-    feedback_report["right_knee_angle"] = fb_right
+    # _, fb_left = evaluate_knee_angle(left_hip, left_knee, left_ankle)
+    # _, fb_right = evaluate_knee_angle(right_hip, right_knee, right_ankle)
+    # feedback_report["left_knee_angle"] = fb_left
+    # feedback_report["right_knee_angle"] = fb_right
 
     # Depth
-    _, depthL_msg = evaluate_side_depth(left_hip, left_knee)
-    _, depthR_msg = evaluate_side_depth(right_hip, right_knee)
-    feedback_report["left_depth"] = depthL_msg
-    feedback_report["right_depth"] = depthR_msg
+    depth_msg = evaluate_depth(left_hip, left_knee, left_ankle, right_hip, right_knee, right_ankle)
+    feedback_report["stance_depth"] = depth_msg
 
     # Symmetry
     _, sym_msg = evaluate_symmetry(left_knee, right_knee)

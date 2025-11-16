@@ -5,6 +5,8 @@ function App() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [feedback, setFeedback] = useState(null);
   const [processedImage, setProcessedImage] = useState(null);
+  const [loading, setLoading] = useState(false); //for when we are waitiing for analysis.
+
 
 
   const handleFileChange = (e) => {
@@ -14,18 +16,27 @@ function App() {
   const handleUpload = async () => {
     if (!selectedFile) return alert("Please upload an image!");
 
+      setLoading(true);   // start loading
+      setFeedback(null);  // clear old results
+
     const formData = new FormData();
     formData.append("file", selectedFile);
 
-    const res = await fetch("https://ai-wushu-coach-add5.onrender.com/analyze", {
-      method: "POST",
-      body: formData,
-    });
+    try{
 
-    const data = await res.json();
-    setFeedback(data);
-    setProcessedImage(`data:image/jpeg;base64,${data.image}`); 
+      // const res = await fetch("https://ai-wushu-coach-add5.onrender.com/analyze", {
+      const res = await fetch("http://127.0.0.1:8000/analyze", {
+        method: "POST",
+        body: formData,
+      });
 
+      const data = await res.json();
+      setFeedback(data);
+      setProcessedImage(`data:image/jpeg;base64,${data.image}`); 
+      
+    } finally {
+      setLoading(false);  // stop loading always
+    }    
   };
 
 
@@ -57,6 +68,17 @@ function App() {
             Analyze Stance
           </button>
 
+          {loading && (
+            <div className="mt-4 flex flex-col items-center">
+              <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+              <p className="text-blue-600 font-medium mt-2">Analyzing stance…</p>
+            </div>
+          )}
+
+
+
+
+
           {processedImage && (
             <div className="mt-6 flex justify-center">
               <img
@@ -72,7 +94,7 @@ function App() {
             <div className="mt-6 bg-gray-50 p-4 rounded-lg border">
               <h3 className="text-xl font-semibold mb-3">Wushu Stance Feedback</h3>
 
-              {Object.entries(feedback).map(([key, value]) => (
+              {Object.entries(feedback).filter(([key]) => key !== "image").map(([key, value]) => (
                 <p key={key} className="mb-1">
                   <span className="font-medium">{key.replace(/_/g, " ")}:</span>{" "}
                   {value}
