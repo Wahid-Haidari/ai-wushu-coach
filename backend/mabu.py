@@ -54,7 +54,7 @@ def evaluate_side_depth(hip, knee, ankle):
     depth_condition = "good"
     
 
-    if depth_ratio > 1.35: 
+    if depth_ratio > 1.36: 
         depth_condition = "high"    
     elif depth_ratio < 1.00:
         depth_condition = "low"
@@ -69,12 +69,10 @@ def evaluate_depth(left_hip, left_knee, left_ankle, right_hip, right_knee, right
 
     if left_depth_condition == "good" and right_depth_condition == "good":
         return "✅ Good stance depth!"
-    elif left_depth_condition == "hight" or right_depth_condition == "high":
+    elif left_depth_condition == "high" or right_depth_condition == "high":
         return "⚠️ Stance is too high — lower your hips."
     elif left_depth_condition == "low" or right_depth_condition == "low":
         return "⚠️ You may be squatting too deep."
-    else:
-        return f"{left_depth_condition}, {right_depth_condition}"
 
 
 # Evaluate symmetry between left and right knees ________________________________________
